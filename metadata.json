@@ -1,0 +1,6 @@
+{
+  "name": "AS World",
+  "description": "AS World — Premium multi-vendor ready e-commerce marketplace with responsive mobile and desktop shopping experiences and full admin control.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

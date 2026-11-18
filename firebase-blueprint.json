@@ -1,0 +1,507 @@
+{
+  "entities": {
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Authorized administrator account for AS World",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "format": "email", "minLength": 3, "maxLength": 254 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "role": { "type": "string", "enum": ["super_admin", "manager", "editor"] },
+        "active": { "type": "boolean" },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "name", "role", "active", "createdAt", "updatedAt"]
+    },
+    "AdminInvite": {
+      "title": "AdminInvite",
+      "description": "Pending invitation for a user to claim an administrator role",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email", "minLength": 3, "maxLength": 254 },
+        "role": { "type": "string", "enum": ["super_admin", "manager", "editor"] },
+        "active": { "type": "boolean" },
+        "createdBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "role", "active", "createdBy", "createdAt", "updatedAt"]
+    },
+    "CustomerProfile": {
+      "title": "CustomerProfile",
+      "description": "Private customer profile, coins wallet, and delivery details (PII isolated)",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "email": { "type": "string", "format": "email", "maxLength": 254 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "district": { "type": "string", "maxLength": 80 },
+        "city": { "type": "string", "maxLength": 80 },
+        "area": { "type": "string", "maxLength": 120 },
+        "address": { "type": "string", "maxLength": 500 },
+        "coins": { "type": "integer" },
+        "totalCoinsEarned": { "type": "integer" },
+        "checkInStreak": { "type": "integer" },
+        "lastCheckInDate": { "type": "string", "maxLength": 20 },
+        "lastSpinDate": { "type": "string", "maxLength": 20 },
+        "lastGiftTapDate": { "type": "string", "maxLength": 20 },
+        "lastScratchDate": { "type": "string", "maxLength": 20 },
+        "lastDiceDate": { "type": "string", "maxLength": 20 },
+        "lastMemoryDate": { "type": "string", "maxLength": 20 },
+        "lastShareDate": { "type": "string", "maxLength": 20 },
+        "dailySharesCount": { "type": "integer" },
+        "referralCode": { "type": "string", "maxLength": 30 },
+        "referredByCode": { "type": "string", "maxLength": 30 },
+        "referredByUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "name", "email", "createdAt", "updatedAt"]
+    },
+    "SavedAddress": {
+      "title": "SavedAddress",
+      "description": "Customer saved delivery address book entry",
+      "type": "object",
+      "properties": {
+        "label": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "recipientName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "phone": { "type": "string", "minLength": 6, "maxLength": 30 },
+        "district": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "city": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "area": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "address": { "type": "string", "minLength": 3, "maxLength": 500 },
+        "isDefault": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["label", "recipientName", "phone", "district", "city", "area", "address", "isDefault", "createdAt", "updatedAt"]
+    },
+    "CoinActivity": {
+      "title": "CoinActivity",
+      "description": "Customer AS Coins earning and redemption log",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["check_in", "spin_wheel", "gift_tap", "scratch_card", "lucky_dice", "memory_flip", "external_link", "share_bonus", "referral_signup", "referral_commission", "order_bonus", "checkout_redeem"]
+        },
+        "amount": { "type": "integer" },
+        "description": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "amount", "description", "createdAt"]
+    },
+    "ReferralProfile": {
+      "title": "ReferralProfile",
+      "description": "Public-safe referral code lookup mapping code to ownerUid (no PII)",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string", "minLength": 3, "maxLength": 30 },
+        "ownerUid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["code", "ownerUid", "displayName", "createdAt"]
+    },
+    "ReferralCommission": {
+      "title": "ReferralCommission",
+      "description": "10% order commission coins awarded to referrer from referred customer orders",
+      "type": "object",
+      "properties": {
+        "referrerUid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "referrerCode": { "type": "string", "minLength": 3, "maxLength": 30 },
+        "refereeUid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "refereeName": { "type": "string", "maxLength": 120 },
+        "orderId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "orderNumber": { "type": "string", "minLength": 4, "maxLength": 64 },
+        "orderTotal": { "type": "number" },
+        "commissionPct": { "type": "number" },
+        "commissionCoins": { "type": "integer" },
+        "status": { "type": "string", "enum": ["pending", "credited"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["referrerUid", "referrerCode", "refereeUid", "orderId", "orderNumber", "orderTotal", "commissionPct", "commissionCoins", "status", "createdAt", "updatedAt"]
+    },
+    "CartItem": {
+      "title": "CartItem",
+      "description": "Item in a customer shopping cart",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "quantity": { "type": "integer" },
+        "selectedColor": { "type": "string", "maxLength": 60 },
+        "selectedSize": { "type": "string", "maxLength": 60 },
+        "addedAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["productId", "quantity", "addedAt", "updatedAt"]
+    },
+    "WishlistItem": {
+      "title": "WishlistItem",
+      "description": "Product saved in customer wishlist",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "addedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["productId", "addedAt"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Top-level product category",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "slug": { "type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[a-z0-9\\-]+$" },
+        "description": { "type": "string", "maxLength": 500 },
+        "imageUrl": { "type": "string", "maxLength": 400000 },
+        "displayOrder": { "type": "integer" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "slug", "displayOrder", "active", "createdAt", "updatedAt"]
+    },
+    "Subcategory": {
+      "title": "Subcategory",
+      "description": "Product subcategory belonging to a parent category",
+      "type": "object",
+      "properties": {
+        "categoryId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "slug": { "type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[a-z0-9\\-]+$" },
+        "description": { "type": "string", "maxLength": 500 },
+        "displayOrder": { "type": "integer" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["categoryId", "name", "slug", "displayOrder", "active", "createdAt", "updatedAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Marketplace product listing",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "slug": { "type": "string", "minLength": 1, "maxLength": 220 },
+        "description": { "type": "string", "maxLength": 20000 },
+        "sku": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "price": { "type": "number" },
+        "discountPrice": { "type": "number" },
+        "categoryId": { "type": "string", "maxLength": 128 },
+        "categoryName": { "type": "string", "maxLength": 100 },
+        "subcategoryId": { "type": "string", "maxLength": 128 },
+        "subcategoryName": { "type": "string", "maxLength": 100 },
+        "brand": { "type": "string", "maxLength": 100 },
+        "stock": { "type": "integer" },
+        "images": { "type": "array", "description": "Unlimited product gallery URLs up to Firestore document cap (250)" },
+        "sizes": { "type": "array", "description": "Available sizes list (up to 100)" },
+        "colors": { "type": "array", "description": "Multi-color selection from global palette and custom colors (up to 200)" },
+        "variations": { "type": "array", "description": "Product variations list (up to 150)" },
+        "specifications": { "type": "object", "description": "Custom key-value attributes and specifications (up to 100)" },
+        "weight": { "type": "string", "maxLength": 60 },
+        "shippingInfo": { "type": "string", "maxLength": 500 },
+        "status": { "type": "string", "enum": ["active", "draft", "archived"] },
+        "visible": { "type": "boolean" },
+        "featured": { "type": "boolean" },
+        "recommended": { "type": "boolean" },
+        "trending": { "type": "boolean" },
+        "newArrival": { "type": "boolean" },
+        "bestSelling": { "type": "boolean" },
+        "salesCount": { "type": "integer" },
+        "ratingAvg": { "type": "number" },
+        "ratingCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "slug", "sku", "price", "stock", "images", "status", "visible", "featured", "salesCount", "ratingAvg", "ratingCount", "createdAt", "updatedAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer purchase order",
+      "type": "object",
+      "properties": {
+        "orderNumber": { "type": "string", "minLength": 4, "maxLength": 64 },
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "customerName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "mobile": { "type": "string", "minLength": 6, "maxLength": 30 },
+        "email": { "type": "string", "maxLength": 254 },
+        "district": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "city": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "area": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "deliveryAddress": { "type": "string", "minLength": 3, "maxLength": 500 },
+        "deliveryInstructions": { "type": "string", "maxLength": 500 },
+        "paymentMethod": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "paymentMethodLabel": { "type": "string", "maxLength": 80 },
+        "paymentTransactionId": { "type": "string", "maxLength": 120 },
+        "paymentSenderNumber": { "type": "string", "maxLength": 40 },
+        "paymentStatus": { "type": "string", "enum": ["unpaid", "pending_verification", "paid", "refunded"] },
+        "isFirstOrder": { "type": "boolean" },
+        "deliveryPaymentMode": { "type": "string", "enum": ["advance_delivery_cod", "full_cod", "full_prepaid"] },
+        "advancePaidAmount": { "type": "number" },
+        "dueOnDeliveryAmount": { "type": "number" },
+        "couponCode": { "type": "string", "maxLength": 40 },
+        "coinsUsed": { "type": "integer" },
+        "coinDiscount": { "type": "number" },
+        "deliveryManName": { "type": "string", "maxLength": 120 },
+        "deliveryManPhone": { "type": "string", "maxLength": 30 },
+        "subtotal": { "type": "number" },
+        "discountTotal": { "type": "number" },
+        "couponDiscount": { "type": "number" },
+        "shippingFee": { "type": "number" },
+        "total": { "type": "number" },
+        "status": {
+          "type": "string",
+          "enum": ["Pending", "Confirmed", "Processing", "Packed", "Shipped", "Out for Delivery", "Delivered", "Cancelled", "Returned"]
+        },
+        "statusHistory": { "type": "array" },
+        "productIds": { "type": "array" },
+        "itemCount": { "type": "integer" },
+        "idempotencyKey": { "type": "string", "minLength": 8, "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "orderNumber", "userId", "customerName", "mobile", "district", "city", "area",
+        "deliveryAddress", "paymentMethod", "paymentStatus", "subtotal", "shippingFee",
+        "total", "status", "productIds", "itemCount", "idempotencyKey", "createdAt", "updatedAt"
+      ]
+    },
+    "OrderItem": {
+      "title": "OrderItem",
+      "description": "Line item belonging to an order",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "productId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "productName": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "productImage": { "type": "string", "maxLength": 400000 },
+        "sku": { "type": "string", "maxLength": 80 },
+        "selectedColor": { "type": "string", "maxLength": 60 },
+        "selectedSize": { "type": "string", "maxLength": 60 },
+        "unitPrice": { "type": "number" },
+        "quantity": { "type": "integer" },
+        "lineTotal": { "type": "number" }
+      },
+      "required": ["orderId", "productId", "productName", "unitPrice", "quantity", "lineTotal"]
+    },
+    "Banner": {
+      "title": "Banner",
+      "description": "Storefront banner image and scheduling config",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 150 },
+        "description": { "type": "string", "maxLength": 500 },
+        "placement": {
+          "type": "string",
+          "enum": ["top_strip", "main", "mobile", "desktop", "promotional", "flash_sale", "category", "campaign", "sponsored"]
+        },
+        "discountText": { "type": "string", "maxLength": 60 },
+        "accentColor": { "type": "string", "maxLength": 30 },
+        "desktopImageUrl": { "type": "string", "maxLength": 400000 },
+        "mobileImageUrl": { "type": "string", "maxLength": 400000 },
+        "linkUrl": { "type": "string", "maxLength": 500 },
+        "displayOrder": { "type": "integer" },
+        "active": { "type": "boolean" },
+        "startDate": { "type": "string", "maxLength": 40 },
+        "endDate": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "placement", "displayOrder", "active", "createdAt", "updatedAt"]
+    },
+    "FlashSale": {
+      "title": "FlashSale",
+      "description": "Time-bound flash sale campaign",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 150 },
+        "subtitle": { "type": "string", "maxLength": 300 },
+        "bannerImageUrl": { "type": "string", "maxLength": 400000 },
+        "startDate": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "endDate": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "active": { "type": "boolean" },
+        "items": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "startDate", "endDate", "active", "items", "createdAt", "updatedAt"]
+    },
+    "Coupon": {
+      "title": "Coupon",
+      "description": "Checkout promotional coupon code",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string", "minLength": 2, "maxLength": 40 },
+        "discountType": { "type": "string", "enum": ["percentage", "fixed"] },
+        "discountValue": { "type": "number" },
+        "minOrderAmount": { "type": "number" },
+        "maxDiscountAmount": { "type": "number" },
+        "expiryDate": { "type": "string", "maxLength": 40 },
+        "usageLimit": { "type": "integer" },
+        "usedCount": { "type": "integer" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["code", "discountType", "discountValue", "minOrderAmount", "usageLimit", "usedCount", "active", "createdAt", "updatedAt"]
+    },
+    "DiscountRule": {
+      "title": "DiscountRule",
+      "description": "Automated product or category promotional discount",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 300 },
+        "discountType": { "type": "string", "enum": ["percentage", "fixed"] },
+        "discountValue": { "type": "number" },
+        "targetType": { "type": "string", "enum": ["all", "category", "product"] },
+        "targetId": { "type": "string", "maxLength": 128 },
+        "startDate": { "type": "string", "maxLength": 40 },
+        "endDate": { "type": "string", "maxLength": 40 },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "discountType", "discountValue", "targetType", "active", "createdAt", "updatedAt"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Verified purchase customer product review",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "orderId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "rating": { "type": "integer" },
+        "comment": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "verifiedPurchase": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["approved", "pending", "rejected"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["productId", "userId", "userName", "orderId", "rating", "comment", "verifiedPurchase", "status", "createdAt", "updatedAt"]
+    },
+    "SiteSettings": {
+      "title": "SiteSettings",
+      "description": "Storefront configuration document (website, shipping, payments, homepage, rewards)",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["website", "shipping", "payments", "homepage", "rewards"] },
+        "data": { "type": "object" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "data", "updatedAt"]
+    },
+    "ContactMessage": {
+      "title": "ContactMessage",
+      "description": "Customer inquiry from Contact Us page",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "email": { "type": "string", "format": "email", "maxLength": 254 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "subject": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "message": { "type": "string", "minLength": 1, "maxLength": 3000 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["new", "read", "resolved"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "subject", "message", "status", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/AdminUser" },
+      "description": "Authorized administrator accounts"
+    },
+    "/adminInvites/{inviteId}": {
+      "schema": { "$ref": "#/entities/AdminInvite" },
+      "description": "Admin role invitations managed by super admins"
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/CustomerProfile" },
+      "description": "Private customer profiles containing PII"
+    },
+    "/users/{userId}/cart/{itemId}": {
+      "schema": { "$ref": "#/entities/CartItem" },
+      "description": "Persistent shopping cart items scoped to customer"
+    },
+    "/users/{userId}/wishlist/{productId}": {
+      "schema": { "$ref": "#/entities/WishlistItem" },
+      "description": "Persistent wishlist products scoped to customer"
+    },
+    "/users/{userId}/addresses/{addressId}": {
+      "schema": { "$ref": "#/entities/SavedAddress" },
+      "description": "Saved multi-address book entries scoped to customer"
+    },
+    "/users/{userId}/coinHistory/{entryId}": {
+      "schema": { "$ref": "#/entities/CoinActivity" },
+      "description": "AS Coins earning and spending ledger scoped to customer"
+    },
+    "/categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/Category" },
+      "description": "Marketplace categories"
+    },
+    "/subcategories/{subcategoryId}": {
+      "schema": { "$ref": "#/entities/Subcategory" },
+      "description": "Marketplace subcategories linked to parent categories"
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Marketplace product catalog"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Customer orders"
+    },
+    "/orders/{orderId}/items/{itemId}": {
+      "schema": { "$ref": "#/entities/OrderItem" },
+      "description": "Order line items subcollection"
+    },
+    "/banners/{bannerId}": {
+      "schema": { "$ref": "#/entities/Banner" },
+      "description": "Storefront banners"
+    },
+    "/flashSales/{campaignId}": {
+      "schema": { "$ref": "#/entities/FlashSale" },
+      "description": "Flash sale campaigns"
+    },
+    "/coupons/{couponId}": {
+      "schema": { "$ref": "#/entities/Coupon" },
+      "description": "Checkout discount coupons"
+    },
+    "/discounts/{discountId}": {
+      "schema": { "$ref": "#/entities/DiscountRule" },
+      "description": "Promotional discount rules"
+    },
+    "/reviews/{reviewId}": {
+      "schema": { "$ref": "#/entities/Review" },
+      "description": "Verified purchase product reviews"
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/SiteSettings" },
+      "description": "Global website, shipping, payment, and homepage configuration"
+    },
+    "/contactMessages/{messageId}": {
+      "schema": { "$ref": "#/entities/ContactMessage" },
+      "description": "Customer support inquiries"
+    },
+    "/referralProfiles/{code}": {
+      "schema": { "$ref": "#/entities/ReferralProfile" },
+      "description": "Public-safe referral code lookup mapping"
+    },
+    "/referrals/{referralId}": {
+      "schema": { "$ref": "#/entities/ReferralCommission" },
+      "description": "10% order commission coins ledger"
+    }
+  }
+}
